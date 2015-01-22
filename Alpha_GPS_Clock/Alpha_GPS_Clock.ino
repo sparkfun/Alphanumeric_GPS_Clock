@@ -5,6 +5,9 @@
  
  This code is public domain but you buy me a beer if you use this and we meet someday (Beerware license).
  
+ NOTE: This is the older, kind of flawed code to see how we used to hardcode DST. Please see
+ Alpha_GPS_Clock_with_DST.ino for the latest and greatest.
+ 
  This code takes the GPS NMEA strings from a Locosys LS20031 module and outputs the current
  time to a 6 panel alphanumeric display. Note: To reprogram the Arduino, I have to unplug the GPS
  module from the RX line on the Arduino. I would use the newsoftserial lib from Mikal but I don't
@@ -16,10 +19,6 @@
  There's a neat day of the week function in here!
  
  We also display current altitude and uptime in hours on every hour.
- 
- 3-23-2014: This is what happens when you assume a project won't last for more than a couple years.
- Here I am fixing DST on a clock I never thought would make it to 2014. Man was I wrong... Time to
- program in a (nearly) permanent daylight saving time fix.
  
  */
 
@@ -46,24 +45,29 @@ void printFloat(double f, int digits = 2);
 
 char buffer[50];
 
-void setup() {
-  Serial.begin(57600);
+void setup()
+{
+  Serial.begin(9600);
   Serial.print("GPS Clock Mini"); 
 
 }
 
-void loop() {
+void loop()
+{
   bool newdata = false;
   unsigned long start = millis();
 
   //Every second we print an update
-  while (millis() - start < 1000) {
-    if (feedgps()) {
+  while (millis() - start < 1000)
+  {
+    if (feedgps())
+    {
       newdata = true;
     }
   }
 
-  if (newdata) {
+  if (newdata)
+  {
     unsigned long age, date, time;
     int year;
     byte month, day, hour, minute, second, hundredths;
@@ -79,52 +83,29 @@ void loop() {
     Serial.print(" ");
 
     //Check for daylight savings time
-    
-    //This is the old way of doing it
-    //Works fine until you get to the year you never expected your project to make it to
-    /*if(year == 2011) {
-      if(month == 3 && day > 12) hour++; //DST begins March 13th
-      else if(month > 3 && month < 11) hour++;
-      else if(month == 11 && day < 6) hour++; //DST ends November 6th
-    }
-    if(year == 2012) {
-      if(month == 3 && day > 10) hour++; //DST begins March 11th
-      else if(month > 3 && month < 11) hour++;
-      else if(month == 11 && day < 4) hour++; //DST ends November 4th
-    }
-    if(year == 2013) {
-      if(month == 3 && day > 9) hour++; //DST begins March 10th
-      else if(month > 3 && month < 11) hour++;
-      else if(month == 11 && day < 3) hour++; //DST ends November 3th
-    }*/
-    
-    //Since 2007 DST starts on the second Sunday in March and ends the first Sunday of November
-    //Let's just assume it's going to be this way for awhile (silly US government!)
-    //Example from: http://stackoverflow.com/questions/5590429/calculating-daylight-savings-time-from-only-date
-    boolean dst = false; //Assume we're not in DST
-    if(month > 3 || month < 11) dst = true; //DST is happening!
-    byte DoW = day_of_week(year, month, day); //Get the day of the week. 0 = Sunday, 6 = Saturday
-    //In March, we are DST if our previous Sunday was on or after the 8th.
-    int previousSunday = day - DoW;
-    if (month == 3)
-    {
-      if(previousSunday >= 8) dst = true; 
-    } 
-    //In November we must be before the first Sunday to be dst.
-    //That means the previous Sunday must be before the 1st.
-    if(month == 11)
-    {
-      if(previousSunday <= 0) dst = true;
-    }
-    if(dst == true) hour++; //If we're in DST add an extra hour
 
+    //Works fine until you get to the year you never expected your project to make it to
+    if(year == 2011) {
+     if(month == 3 && day > 12) hour++; //DST begins March 13th
+     else if(month > 3 && month < 11) hour++;
+     else if(month == 11 && day < 6) hour++; //DST ends November 6th
+     }
+     if(year == 2012) {
+     if(month == 3 && day > 10) hour++; //DST begins March 11th
+     else if(month > 3 && month < 11) hour++;
+     else if(month == 11 && day < 4) hour++; //DST ends November 4th
+     }
+     if(year == 2013) {
+     if(month == 3 && day > 9) hour++; //DST begins March 10th
+     else if(month > 3 && month < 11) hour++;
+     else if(month == 11 && day < 3) hour++; //DST ends November 3th
+     }
 
     //Convert UTC hours to local current time using local_hour
     if(hour < local_hour_offset)
       hour += 24; //Add 24 hours before subtracting local offset
     hour -= local_hour_offset;
     if(hour > 12) hour -= 12; //Get rid of military time
-
 
     //Let's just display the time, but on 15 seconds and 45 seconds, display something else
     if( (second == 15) || (second == 45)) { 
@@ -160,7 +141,9 @@ void loop() {
       delay(1000); //Display this message for 1 second
     }
     else { //Just print the time
-      sprintf(buffer, "%02d%02d%02d", hour, minute, second);
+
+        //Let's count down to new years!
+      sprintf(buffer, "%02d%02d%02d", 11 - hour, 59 - minute, 59 - second);
       Serial.println(buffer);
 
       //Scrolling causes the display to flash, so turn it off
@@ -279,7 +262,8 @@ void printFloat(double number, int digits) {
   } 
 }
 
-void gpsdump(TinyGPS &gps) {
+void gpsdump(TinyGPS &gps)
+{
   long lat, lon;
   float flat, flon;
   unsigned long age, date, time, chars;
@@ -343,11 +327,13 @@ void gpsdump(TinyGPS &gps) {
   Serial.println();
 }
 
-bool feedgps() {
+bool feedgps()
+{
   while (Serial.available()) {
     if (gps.encode(Serial.read()))
       return true;
   }
   return false;
 }
+
 
