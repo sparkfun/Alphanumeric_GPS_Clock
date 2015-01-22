@@ -1,8 +1,9 @@
 SparkFun Alpha GPS Wall Clock
 =============================
 
-[SparkFun GPS Wall Clock](https://cdn.sparkfun.com/r/600-600/assets/learn_tutorials/3/4/3/GPS_Alpha_Clock_3.jpg)
+![SparkFun GPS Wall Clock](https://cdn.sparkfun.com/r/600-600/assets/learn_tutorials/3/4/3/GPS_Alpha_Clock_3.jpg)
 
+[SparkFun GPS Wall Clock](https://learn.sparkfun.com/tutorials/alpha-gps-wall-clock)
 
 This is a GPS controlled clock - a clock you truly never have to set! 
 Using GPS and some formulas we figure out what day of the week and if we are in or out of daylight savings time.
