@@ -10,7 +10,7 @@ Using GPS and some formulas we figure out what day of the week and if we are in 
 
 This project uses an Arduino Uno board and several 1" alphanumeric displays, available from SparkFun Electronics. 
 
-Checkout the full tutorial [here](https://learn.sparkfun.com/tutorials/alpha-gps-wall-clock).
+Checkout the full tutorial [here](https://learn.sparkfun.com/tutorials/alphanumeric-gps-wall-clock).
 
 Repository Contents
 -------------------
