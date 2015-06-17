@@ -10,6 +10,13 @@
  module from the RX line on the Arduino. I would use the newsoftserial lib from Mikal but I don't
  think it is working at 57600bps with the flood of serial GPS data coming in from the LS20031.
  
+ GP-635T Module:
+ Right most pin 1 is GND
+ 2 is VCC is 3.3-5.5V
+ 3 is TX from GPS to RX on Arduino
+ 
+ Alphanumeric displays operate at 9V. Power from VIN pin on Arduino with a 9V wall adapter.
+
  The time should be correctly adjusted for daylight savings time in the MST timezone until 2014.
  
  We also display current day of the week and date on 15s and 45s of every minute.
@@ -25,7 +32,7 @@
  
  1-1-2015: Updated to not use the GPS library. This removes the requirement to have a lock. All we
  need/want is the date and time which takes very few satellite signals.
- 
+
  */
 
 #include <AlphaNumeric_Driver.h>  // Include AlphaNumeric Display Driver Library
